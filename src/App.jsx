@@ -91,6 +91,7 @@ export const App = () => {
                       data-cy="ClearButton"
                       type="button"
                       className="delete"
+                      onClick={() => setQuery('')}
                     />
                   </span>
                 )}

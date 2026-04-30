@@ -25,10 +25,17 @@ const products = productsFromServer.map(product => {
 export const App = () => {
   const [selectedUserId, setSelectedUserId] = useState(0);
 
-  const filteredProducts =
-    selectedUserId === 0
-      ? products
-      : products.filter(p => p.user?.id === selectedUserId);
+  const [query, setQuery] = useState('');
+
+  const filteredProducts = products.filter(product => {
+    const matchesUser =
+      selectedUserId === 0 || product.user?.id === selectedUserId;
+    const matchesQuery = product.name
+      .toLowerCase()
+      .includes(query.toLowerCase().trim());
+
+    return matchesUser && matchesQuery;
+  });
 
   return (
     <div className="section">
@@ -69,21 +76,24 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={query}
+                  onChange={el => setQuery(el.target.value)}
                 />
 
                 <span className="icon is-left">
                   <i className="fas fa-search" aria-hidden="true" />
                 </span>
 
-                <span className="icon is-right">
-                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
-                </span>
+                {query && (
+                  <span className="icon is-right">
+                    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                    />
+                  </span>
+                )}
               </p>
             </div>
 
@@ -125,7 +135,10 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
-                onClick={() => setSelectedUserId(0)}
+                onClick={() => {
+                  setSelectedUserId(0);
+                  setQuery('');
+                }}
               >
                 Reset all filters
               </a>
